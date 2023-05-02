@@ -1,0 +1,57 @@
+#!/bin/bash -u
+PATH=/bin:/usr/bin ; export PATH
+umask 022
+
+# Moin Hassan hass0453@algonquinlive.com
+
+#Using the if or else function to determine the fact that if the values meet under the arguements the code will execute or else the code will not function as the minimum number of arguements should be 2
+
+if [ $# -lt 2 ]
+then
+        echo 1>&2 "Error invalid number of arguements" #redirecting the stdout to stderr
+        exit 1
+fi
+
+studentno=$1
+
+#shifts the arguments to the left by 1 (removes tthe first arguement from the lists of arguements)
+
+shift 1
+
+i=1 #using it for numbering columns
+
+#using for and case function as we want the arguements to loop as well retrieve the questions below
+output="#1567"
+for question in "$@"
+do
+        case $question in
+                1)
+                        output="$output\n$i) A"
+                        ;;
+                2)
+                        output="$output\n$i) B"
+                        ;;
+                3)
+                        output="$output\n$i) C"
+                        ;;
+                4)
+                        output="$output\n$i) D"
+                        ;;
+                5)
+                        output="$output\n$i) E"
+                        ;;
+                -)
+                        output="$output\n$i) -"
+                        ;;
+                *)
+                        echo 1>&2 "Error invalid answer: $question"
+                        exit 2
+                        ;;
+        esac
+#using the increment arguement to create multiple columns as everytime we add an arguement the value will increase by 1 
+        i=$((i + 1))
+done
+
+# output to file HERE and not before! -e means it inteprets escape sequences for \n
+echo -e "$output" >"$studentno.txt"
+exit 0
