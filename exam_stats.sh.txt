@@ -1,0 +1,63 @@
+#!/bin/bash -u
+PATH=/bin:/usr/bin ; export PATH
+umask 022
+
+# Moin Hassan hass0453@algonquinlive.com
+
+IFS=:
+
+
+args=()
+for arg in "$@"
+do
+	args+=("$arg")
+done
+
+numstd=${#args[@]}
+if [ $numstd -lt 1 ]
+then
+	echo 1>&2 "Must have at least one argument."
+	exit 1
+fi
+
+
+TOP_GRADE=-1
+BOTTOM_GRADE=101
+sum=0
+for arg in "${args[@]}"
+do
+	read stdno stdname stdgrade <<< "${arg}"
+	if [ "$stdgrade" -lt 0 ] || [ "$stdgrade" -gt 100 ]
+	then
+		echo "$stdname $stdgrade error grade must be between 0 to 100" >&2
+		exit 10	
+	fi
+	sum=$((sum + stdgrade))
+	
+	if [ $stdgrade -gt $TOP_GRADE ]
+	then
+		TOP_GRADE=$stdgrade
+		TOP_ID=$stdno
+		TOP_NAME=$stdname
+	fi
+
+	if [ $stdgrade -lt $BOTTOM_GRADE ] 
+	then
+		BOTTOM_GRADE=$stdgrade
+		BOTTOM_ID=$stdno
+                BOTTOM_NAME=$stdname
+	fi
+done
+
+avg="$(( sum / numstd ))"
+
+exec > stats.txt
+echo "#1567"
+echo "NUM_STUDS=$numstd"
+echo "AVG=$avg"
+echo "TOP_ID=$TOP_ID"
+echo "TOP_NAME=$TOP_NAME"
+echo "TOP_GRADE=$TOP_GRADE"
+echo "BOTTOM_ID=$BOTTOM_ID"
+echo "BOTTOM_NAME=$BOTTOM_NAME"
+echo "BOTTOM_GRADE=$BOTTOM_GRADE"
